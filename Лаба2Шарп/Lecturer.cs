@@ -1,19 +1,27 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace Лаба2Шарп
 {
-    public class Lecturer : Person, IDataAndCopy,IEnumerable
+    public enum Action {Add,Remove,Property};
+    public delegate void LecturerChangedHandler<TKey>(object source, LectrurersChangedEventArgs<TKey> args);
+
+    public class Lecturer : Person, IDataAndCopy,IEnumerable,INotifyPropertyChanged
     {
+       
+        public event PropertyChangedEventHandler PropertyChanged;
+
+
         private string kafedra;
         private Post inform;
         private int rait;
-        private System.Collections.Generic.List<Subject> subjects;
-        private System.Collections.Generic.List<Theme> themes;
+        private List<Subject> subjects;
+        private List<Theme> themes;
         public Lecturer(string kaf, int raiting, Post ekez,Person person):base(person.Name,person.Surname,person.Date)
         {
             subjects = new List<Subject>();
@@ -35,13 +43,21 @@ namespace Лаба2Шарп
         public string Kafedra
         {
             get { return kafedra; }
-            set { kafedra = value; }
+            set
+            {
+                kafedra = value;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("Кафедра"));
+            }
         }
 
         public Post Doljnost
         {
             get { return inform; }
-            set { inform = value; }
+            set
+            {
+                inform = value;
+                PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("Должность"));
+            }
         }
 
         public int Raiting
@@ -70,6 +86,9 @@ namespace Лаба2Шарп
             }
         }
         int sum = 0;
+
+        
+
         public int FullTime
         {
             get
@@ -186,11 +205,9 @@ namespace Лаба2Шарп
             }
             return obj;
         }
-        /*public Lecturer Ref()
-        {
-            Lecturer reference= this;
-            return reference;
-        }*/
-       
+
+
+        
+
     }
 }

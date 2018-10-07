@@ -6,42 +6,44 @@ using System.Threading.Tasks;
 
 namespace Лаба2Шарп
 {
-    public class LecturerCollection:Lecturer
+    public class LecturerCollection<TKey>:Lecturer
     {
         public delegate void LecturertListHandler(object source, LecturerListHandlerEventArgs args);
         public event LecturertListHandler LecturersCountChanged;
         public event LecturertListHandler LecturerReferenceChanged;
-        
 
+        public event LecturerChangedHandler<TKey> LecturersChanged;
 
+        private Dictionary<TKey, Lecturer> keyValuePairs;
         private System.Collections.Generic.List<Lecturer> _lecturers;
         public string NameOfList { get; set; }
 
 
         public LecturerCollection()
         {
-            _lecturers = new List<Lecturer>();
+            keyValuePairs = new Dictionary<TKey, Lecturer>();
+           // _lecturers = new List<Lecturer>();
         }
 
 
-        public void AddDefaults()
+        public void AddDefaults(TKey key)
         {
             Lecturer lecturer = new Lecturer("PZ", 10, Post.Bachelor, new Person("Dmitro", "Petrov", new DateTime(2000, 10, 10)));
-            _lecturers.Add(lecturer);
-            LecturersCountChanged?.Invoke(this, new LecturerListHandlerEventArgs(NameOfList, "Добавлен", lecturer));
+            keyValuePairs.Add(key, lecturer);
+            LecturersChanged?.Invoke(this, new LectrurersChangedEventArgs<TKey>(NameOfList,Action.Add," ",key));
         }
 
 
-        public void AddLecturer(params Lecturer[] list)
+        public void AddLecturer(params KeyValuePair<TKey,Lecturer>[] list)
         {
             if (list == null)
             {
-                list = new Lecturer[0];
+                list = new KeyValuePair<TKey, Lecturer>[0];
             }
             for (int i = 0; i < list.Length; i++)
             {
-                _lecturers.Add(list[i]);
-                LecturersCountChanged?.Invoke(this, new LecturerListHandlerEventArgs(NameOfList, "Добавлен", list[i]));
+                keyValuePairs.Add(list[i].Key, list[i].Value);
+                LecturersChanged?.Invoke(this, new LectrurersChangedEventArgs<TKey>(NameOfList,Action.Add," ",list[i].Key));
             }
         }
 
@@ -89,7 +91,7 @@ namespace Лаба2Шарп
         {
             if (j > _lecturers.Count) { return false; }
             else {
-                LecturersCountChanged?.Invoke(this, new LecturerListHandlerEventArgs(NameOfList, "Удален", _lecturers[j]));
+                LecturersChanged?.Invoke(this, new LecturerListHandlerEventArgs(NameOfList, "Удален", _lecturers[j]));
                 _lecturers.RemoveAt(j);               
                 return true;
             }
@@ -100,8 +102,29 @@ namespace Лаба2Шарп
             get { return _lecturers[index]; }
             set {
                 _lecturers[index] = value;
-                LecturerReferenceChanged?.Invoke(this, new LecturerListHandlerEventArgs(NameOfList, "Изменен", _lecturers[index]));
+                LecturersChanged?.Invoke(this, new LecturerListHandlerEventArgs(NameOfList, "Изменен", _lecturers[index]));
             }
         }
+
+        public bool Remove(Lecturer lecturer)
+        {
+            if (!keyValuePairs.ContainsValue(lecturer)) return false;
+            else
+            {
+                foreach (var item in keyValuePairs.Where(kpv => kpv.Value == lecturer).ToList())
+                {
+                    keyValuePairs.Remove(item.Key);
+                }
+                return true;
+            }
+        }
+
+        public IEnumerable<Lecturer> GetLecturers()
+        {
+            SortRaitings();
+            return _lecturers;
+        }
+
+
     }
 }

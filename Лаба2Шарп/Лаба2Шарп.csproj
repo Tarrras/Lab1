@@ -46,6 +46,7 @@
     <Compile Include="IDataAndCopy.cs" />
     <Compile Include="Journal.cs" />
     <Compile Include="JournalEntry.cs" />
+    <Compile Include="LectrurersChangedEventArgs.cs" />
     <Compile Include="Lecturer.cs" />
     <Compile Include="LecturerCollection.cs" />
     <Compile Include="LecturerListHandlerEventArgs.cs" />
