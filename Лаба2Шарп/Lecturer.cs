@@ -22,6 +22,7 @@ namespace Лаба2Шарп
         private int rait;
         private List<Subject> subjects;
         private List<Theme> themes;
+
         public Lecturer(string kaf, int raiting, Post ekez,Person person):base(person.Name,person.Surname,person.Date)
         {
             subjects = new List<Subject>();
@@ -171,6 +172,7 @@ namespace Лаба2Шарп
                 inform + "" +
                     "\nrait: " + rait + "\nVremya: "+FullTime ;
         }
+
         public override bool Equals(object obj)
         {
             if (!(obj is Lecturer))

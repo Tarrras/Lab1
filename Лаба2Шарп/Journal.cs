@@ -1,42 +1,39 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace Лаба2Шарп
 {
-    public class Journal
+    public class Journal<TKey>
     {
-        public List<JournalEntry> _journalEntries;
+        private List<JournalEntry> _journalEntries;
 
         public Journal()
         {
-            _journalEntries = new List<JournalEntry>();     
+            _journalEntries = new List<JournalEntry>();
         }
 
 
         public override string ToString()
         {
             string list = "";
-            for(int i=0;i< _journalEntries.Count; i++)
+            for (int i = 0; i < _journalEntries.Count; i++)
             {
                 list += _journalEntries[i];
             }
-            return "Cобытия: \n"+
-                list+"\n";
+            return "Cобытия: \n" +
+                list + "\n";
         }
 
 
-        public void AddTypeChanged(object sender, LecturerListHandlerEventArgs e)
+        public void LecturerChanged(object sender, LectrurersChangedEventArgs<TKey> e)
         {
-            _journalEntries.Add(new JournalEntry(e.GetList,e.GetTypes,e.GetNewLecturer.ToString()));
+            _journalEntries.Add(new JournalEntry(e.GetNameOfCollection, e.GetAction, e.GetLecturer, e.GetKey.ToString()));
         }
 
-
-        public void AddCountChanget(object sender, LecturerListHandlerEventArgs e)
-        {
-            _journalEntries.Add(new JournalEntry(e.GetList, e.GetTypes, e.GetNewLecturer.ToString()));
-        }
+       
     }
 }
