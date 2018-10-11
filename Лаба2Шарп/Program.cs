@@ -21,13 +21,13 @@ namespace Лаба2Шарп
             collection2.LecturersChanged += journal.LecturerChanged;
 
             
-            Lecturer lecturer1 = new Lecturer("peimat", keys[0], Post.Specialist, new Person("Petro", "Petrov", new DateTime()));
-            Lecturer lecturer2 = new Lecturer("peimat", keys[1], Post.Specialist, new Person("Petro", "Petrov", new DateTime()));
-            Lecturer lecturer3 = new Lecturer("peimat", keys[2], Post.Specialist, new Person("Petro", "Petrov", new DateTime()));
-            Lecturer lecturer4 = new Lecturer("peimat", keys[3], Post.Specialist, new Person("Petro", "Petrov", new DateTime()));
-            Lecturer lecturer5 = new Lecturer("peimat", keys[4], Post.Specialist, new Person("Petro", "Petrov", new DateTime()));
-            Lecturer lecturer6 = new Lecturer("peimat", keys[5], Post.Specialist, new Person("Petro", "Petrov", new DateTime()));
-            Lecturer lecturer7 = new Lecturer("peimat", keys[6], Post.Specialist, new Person("Petro", "Petrov", new DateTime()));
+            Lecturer lecturer1 = new Lecturer("peimat1", keys[0], Post.Specialist, new Person("Petro", "Petrov", new DateTime()));
+            Lecturer lecturer2 = new Lecturer("peimat2", keys[1], Post.Specialist, new Person("Petro", "Petrov", new DateTime()));
+            Lecturer lecturer3 = new Lecturer("peimat3", keys[2], Post.Specialist, new Person("Petro", "Petrov", new DateTime()));
+            Lecturer lecturer4 = new Lecturer("peimat4", keys[3], Post.Specialist, new Person("Petro", "Petrov", new DateTime()));
+            Lecturer lecturer5 = new Lecturer("peimat5", keys[4], Post.Specialist, new Person("Petro", "Petrov", new DateTime()));
+            Lecturer lecturer6 = new Lecturer("peimat6", keys[5], Post.Specialist, new Person("Petro", "Petrov", new DateTime()));
+            Lecturer lecturer7 = new Lecturer("peimat7", keys[6], Post.Specialist, new Person("Petro", "Petrov", new DateTime()));
 
 
             collection1.AddLecturer(keys[0].ToString(), lecturer1);
@@ -41,21 +41,21 @@ namespace Лаба2Шарп
 
             collection2.AddLecturer("21", new Lecturer());
 
-
-            collection1["130"].Kafedra = "KAFEDRA";
-
-            List<Lecturer> lecturers = new List<Lecturer>();
-           
-            
             collection1.Remove(lecturer2);
 
-
+            collection1["130"].Kafedra = "KAFEDRA";
+            collection1["104"].Kafedra = "KAFEDRAA";
+           
+                             
             Console.WriteLine(journal);
+
+
+            List<Lecturer> lecturers = new List<Lecturer>();
             string res = " ";
             lecturers = collection1.SoringDictionary();
             for (int i = 0; i < lecturers.Count; i++)
             {
-                res += lecturers[i].ToShortString()+$"\nKey:{keys[i]}\n\n";
+                res += lecturers[i].ToShortString()+$"\nKey:{lecturers[i].Raiting}\n\n";
             }
 
             

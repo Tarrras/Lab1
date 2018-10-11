@@ -36,7 +36,7 @@ namespace Лаба2Шарп
         public void AddDefaults(TKey key)
         {
             Lecturer lecturer = new Lecturer("PZ", 10, Post.Bachelor, new Person("Dmitro", "Petrov", new DateTime(2000, 10, 10)));
-            lecturer.PropertyChanged +=this.LecturerChangedIn;
+            lecturer.PropertyChanged += LecturerChangedIn;
             keyValuePairs.Add(key, lecturer);
             LecturersChanged?.Invoke(this, new LectrurersChangedEventArgs<TKey>(NameOfList,Action.Add," ",key));
         }
@@ -45,7 +45,7 @@ namespace Лаба2Шарп
         public void AddLecturer(TKey key,Lecturer list)
         {
             keyValuePairs.Add(key, list);
-            list.PropertyChanged +=this.LecturerChangedIn;
+            list.PropertyChanged += LecturerChangedIn;
             LecturersChanged?.Invoke(this, new LectrurersChangedEventArgs<TKey>(NameOfList,Action.Add," ",key));
         }
 
@@ -85,7 +85,7 @@ namespace Лаба2Шарп
                 {
                     TKey key = item.Key;
                     keyValuePairs.Remove(key);
-                    item.Value.PropertyChanged -= this.LecturerChangedIn;
+                   // item.Value.PropertyChanged -= this.LecturerChangedIn;
                     LecturersChanged?.Invoke(this, new LectrurersChangedEventArgs<TKey>(NameOfList, Action.Remove, " ", key));
                 }
                 return true;

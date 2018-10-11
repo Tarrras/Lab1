@@ -8,9 +8,9 @@ namespace Лаба2Шарп
 {
     public static class ExctensionLecturer
     {
-        public static List<Lecturer> SoringDictionary(this LecturerCollection<string> lecturerCollection)
+        public static List<Lecturer> SoringDictionary(this  LecturerCollection<string> lecturerCollection)
         {
-            int temp;
+            var temp = new Lecturer();
             List<Lecturer> lecturers = lecturerCollection.keyValuePairs.Values.ToList();
             for(int i = 0; i < lecturers.Count; i++)
             {
@@ -18,9 +18,9 @@ namespace Лаба2Шарп
                 {
                     if (lecturers[j].Raiting < lecturers[j + 1].Raiting)
                     {
-                        temp = lecturers[j].Raiting;
-                        lecturers[j].Raiting = lecturers[j + 1].Raiting;
-                        lecturers[j + 1].Raiting = temp;
+                        temp = lecturers[j];
+                        lecturers[j] = lecturers[j + 1];
+                        lecturers[j + 1] = temp;
                     }
                 }
             }
