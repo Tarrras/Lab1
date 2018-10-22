@@ -53,14 +53,14 @@ namespace Лаба2Шарп
         {
             
             get {
-                try
-                {
+               // try
+                //{
                     return keyValuePairs[key];
-                }
-                catch(Exception e)
-                {
-                    throw new Exception(e.ToString());
-                }
+                //}
+                //catch(Exception e)
+                //{
+                  //  throw new Exception(e.ToString());
+                //}
             }
             set
             {
@@ -85,7 +85,7 @@ namespace Лаба2Шарп
                 {
                     TKey key = item.Key;
                     keyValuePairs.Remove(key);
-                   // item.Value.PropertyChanged -= this.LecturerChangedIn;
+                    item.Value.PropertyChanged -= this.LecturerChangedIn;
                     LecturersChanged?.Invoke(this, new LectrurersChangedEventArgs<TKey>(NameOfList, Action.Remove, " ", key));
                 }
                 return true;

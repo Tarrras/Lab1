@@ -21,7 +21,7 @@ namespace Лаба2Шарп
             collection2.LecturersChanged += journal.LecturerChanged;
 
             
-            Lecturer lecturer1 = new Lecturer("peimat1", keys[0], Post.Specialist, new Person("Petro", "Petrov", new DateTime()));
+            Lecturer lecturer1 = new Lecturer("primat1", keys[0], Post.Specialist, new Person("Petro", "Petrov", new DateTime()));
             Lecturer lecturer2 = new Lecturer("peimat2", keys[1], Post.Specialist, new Person("Petro", "Petrov", new DateTime()));
             Lecturer lecturer3 = new Lecturer("peimat3", keys[2], Post.Specialist, new Person("Petro", "Petrov", new DateTime()));
             Lecturer lecturer4 = new Lecturer("peimat4", keys[3], Post.Specialist, new Person("Petro", "Petrov", new DateTime()));
@@ -45,7 +45,8 @@ namespace Лаба2Шарп
 
             collection1["130"].Kafedra = "KAFEDRA";
             collection1["104"].Kafedra = "KAFEDRAA";
-           
+
+            //collection1["10"].Kafedra = "";
                              
             Console.WriteLine(journal);
 
