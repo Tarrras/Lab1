@@ -1,11 +1,15 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
+using System.Runtime.Serialization;
+using System.Runtime.Serialization.Json;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace Лаба2Шарп
 {
+    [Serializable]
     public class Subject
     {
         public string NameOfSubject { get; set; }
@@ -52,7 +56,20 @@ namespace Лаба2Шарп
         }
         public object DeepCopy()
         {
-            return new Subject { NameOfSubject = this.NameOfSubject, AmountOfhours = this.AmountOfhours, Shifr = this.Shifr };
+            Subject subject = new Subject(NameOfSubject, Shifr, AmountOfhours);
+            MemoryStream ms = new MemoryStream();
+            try
+            {
+                DataContractJsonSerializer jsonSerializer = new DataContractJsonSerializer(typeof(Subject));
+                jsonSerializer.WriteObject(ms, subject);
+                ms.Position = 0;
+                subject= jsonSerializer.ReadObject(ms) as Subject;
+            }catch(Exception e)
+            {
+                Console.WriteLine(e.ToString());
+                subject = null;
+            }
+            return subject;
         }
     }
 }

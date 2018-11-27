@@ -2,15 +2,19 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Runtime.Serialization.Json;
+using System.Runtime.Serialization;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.IO;
+using System.Runtime.Serialization.Formatters.Binary;
 
 namespace Лаба2Шарп
 {
     public enum Action {Add,Remove,Property};
     public delegate void LecturerChangedHandler<TKey>(object source, LectrurersChangedEventArgs<TKey> args);
-
+    [Serializable]
     public class Lecturer : Person, IDataAndCopy,IEnumerable,INotifyPropertyChanged
     {
        
@@ -21,12 +25,10 @@ namespace Лаба2Шарп
         private Post inform;
         private int rait;
         private List<Subject> subjects;
-        private List<Theme> themes;
 
         public Lecturer(string kaf, int raiting, Post ekez,Person person):base(person.Name,person.Surname,person.Date)
         {
             subjects = new List<Subject>();
-            themes = new List<Theme>();
             Kafedra = kaf;
             Raiting = raiting;
             Doljnost = ekez;
@@ -35,12 +37,10 @@ namespace Лаба2Шарп
         public Lecturer():base()
         {
             subjects = new List<Subject>();
-            themes=new List<Theme>();
             Doljnost = Post.Bachelor;
             Kafedra = "primat";
             Raiting = 8;
         }
-
         public string Kafedra
         {
             get { return kafedra; }
@@ -50,7 +50,6 @@ namespace Лаба2Шарп
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("Кафедра"));
             }
         }
-
         public Post Doljnost
         {
             get { return inform; }
@@ -60,7 +59,6 @@ namespace Лаба2Шарп
                 PropertyChanged?.Invoke(this, new PropertyChangedEventArgs("Должность"));
             }
         }
-
         public int Raiting
         {
             get { return rait; }
@@ -88,8 +86,6 @@ namespace Лаба2Шарп
         }
         int sum = 0;
 
-        
-
         public int FullTime
         {
             get
@@ -114,11 +110,7 @@ namespace Лаба2Шарп
                 subjects.Add(list[i]); 
             }
         }
-        public System.Collections.Generic.List<Theme> GetThemes
-        {
-            get {return themes; }
-            set {themes=value; }
-        }
+
         public System.Collections.Generic.List<Subject> GetSubject
         {
             get { return subjects; }
@@ -134,10 +126,7 @@ namespace Лаба2Шарп
             {
                 yield return subjects;
             }
-            foreach (Theme theme in themes)
-            {
-                yield return theme;
-            }
+
         }
         public IEnumerable<Subject> GetEnumeratorOfSubject(int hours)
         {
@@ -156,14 +145,9 @@ namespace Лаба2Шарп
             {
                 predm += subjects[i].ToString();
             }
-            string predm2 = "";
-            for (int i = 0; i < themes.Count; i++)
-            {
-                predm2 += themes[i].ToString();
-            }
             return String.Format("Fio:"+base.ToString()+ "\nKafedra: " + Kafedra + "\nInform: " +
                 inform + "" +
-                    "\nrait: " + rait+"\nVremya: " + FullTime + "\nPredmetu: " +predm+"\nDiplomnue robotu: "+predm2+"\n\n");
+                    "\nrait: " + rait + "\nPredmetu: " +predm+"\n");
         }
 
         public override string ToShortString()
@@ -178,7 +162,7 @@ namespace Лаба2Шарп
             if (!(obj is Lecturer))
                 return false;
             else
-                if (this.Kafedra == ((Lecturer)obj).Kafedra && this.Doljnost == ((Lecturer)obj).Doljnost && this.Raiting == ((Lecturer)obj).Raiting && this.GetPerson==((Lecturer)obj).GetPerson && this.FullTime==((Lecturer)obj).FullTime && this.GetThemes==((Lecturer)obj).GetThemes)
+                if (this.Kafedra == ((Lecturer)obj).Kafedra && this.Doljnost == ((Lecturer)obj).Doljnost && this.Raiting == ((Lecturer)obj).Raiting && this.GetPerson==((Lecturer)obj).GetPerson && this.FullTime==((Lecturer)obj).FullTime )
                 return true;
             else return false;
         }
@@ -194,22 +178,141 @@ namespace Лаба2Шарп
         {
             return !lecturer1.Equals(lecturer2);
         }
-        public override object DeepCopy()
+
+
+        private static IFormatter formatter = new BinaryFormatter();
+        public new Lecturer DeepCopy()
         {
-            Lecturer obj = new Lecturer(Kafedra, Raiting, Doljnost, GetPerson);
-            foreach(var i in subjects)
+
+            using (MemoryStream stream = new MemoryStream())
             {
-                obj.subjects.Add((Subject)i.DeepCopy());
+                formatter.Serialize(stream, this);
+                stream.Seek(0, SeekOrigin.Begin);
+                return formatter.Deserialize(stream) as Lecturer;
             }
-            foreach (var i in themes)
-            {
-                obj.themes.Add((Theme)i.DeepCopy());
-            }
-            return obj;
         }
 
+        public bool Save(string filename)
+        {
+            if (!File.Exists($"{filename}.dat"))
+            {
+                Console.WriteLine("Файла с таким именем не обнаруженно. Файл создан");
+            }
+            try
+            {
+                using (FileStream fs = new FileStream($"{filename}.dat", FileMode.OpenOrCreate))
+                {
+                    formatter.Serialize(fs, this);
+                    fs.Close();
+                }
+                
+            }
+            catch(Exception e)
+            {
+                Console.WriteLine(e.ToString());                
+                return false;
+            }
+            return true;
+        }
 
-        
+        public bool Load(string filename)
+        {
+            Lecturer lecturer;
+            try
+            {
+                using (FileStream fs = new FileStream($"{filename}.dat", FileMode.Open))
+                {
+                    lecturer=formatter.Deserialize(fs) as Lecturer;
+                    fs.Close();
+                }
+            }catch(Exception e)
+            {
+                Console.WriteLine("\n ЗАГРУЖАЕМЫЙ ФАЙЛ ПУСТОЙ!");
+                return false;
+            }
 
+            this.Kafedra = lecturer.Kafedra;
+            this.Raiting = lecturer.Raiting;
+            this.Doljnost = lecturer.Doljnost;
+            this.GetPerson = lecturer.GetPerson;
+            this.GetSubject = lecturer.GetSubject;
+            return true;
+        }
+
+        public bool AddFromConsole()
+        {
+            string text="";
+            text += "Введите значения для полей обьекта\n";
+            text += "Доступные для использования разделители: \" \" , \"-\" , \",\" \n";
+            text += "[Название предмета] [Группа] [Кол-во часов]";
+            Console.WriteLine(text);
+            string[] data = Console.ReadLine().Split(' ', ',', '-');
+            int hour;
+            try
+            {
+                hour = int.Parse(data[2]);
+            }catch(Exception e)
+            {
+                Console.WriteLine(e.ToString());
+                return false;
+            }
+            try
+            {
+                Subject subject = new Subject(data[0], data[1], hour);
+                GetSubject.Add(subject);
+                return true;
+            }
+            catch(Exception e)
+            {
+                Console.WriteLine("Вы ввели неправильные данные!");
+                return false;
+            }            
+        }
+
+        public static bool Save(string filename, Lecturer obj)
+        {
+            try
+            {
+                if (!File.Exists($"{filename}.dat"))
+                {
+                    Console.WriteLine("Файла с таким именем не обнаруженно. Файл создан");
+                }
+                using (FileStream fs = new FileStream($"{filename}.dat", FileMode.OpenOrCreate))
+                {
+                    formatter.Serialize(fs, obj);
+                    fs.Close();
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.ToString());
+                return false;
+            }
+            return true;
+        }
+
+        public static bool Load(string filename, Lecturer obj)
+        {
+            Lecturer lecturer;
+            try
+            {
+                using (FileStream fs = new FileStream($"{filename}.dat", FileMode.OpenOrCreate))
+                {
+                    lecturer = formatter.Deserialize(fs) as Lecturer;
+                    fs.Close();
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.ToString());
+                return false;
+            }
+            obj.Kafedra = lecturer.Kafedra;
+            obj.Raiting = lecturer.Raiting;
+            obj.Doljnost = lecturer.Doljnost;
+            obj.GetPerson = lecturer.GetPerson;
+            obj.GetSubject = lecturer.GetSubject;
+            return true;
+        }
     }
 }

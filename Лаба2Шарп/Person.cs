@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Runtime.Serialization.Json;
+using System.Runtime.Serialization;
 using System.Collections;
 using System.Linq;
 using System.Text;
@@ -7,6 +9,7 @@ using System.Threading.Tasks;
 
 namespace Лаба2Шарп
 {
+    [Serializable]
     public class Person:IDataAndCopy,IComparable, IComparer<Person>
     {
         protected string name;
